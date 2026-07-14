@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <linearGradient id="roof" x1="30" y1="38" x2="90" y2="38" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f0f9ff"/>
+      <stop offset="100%" stop-color="#bae6fd"/>
+    </linearGradient>
+    <filter id="shadow" x="-4" y="-2" width="128" height="128">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0c4a6e" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="58" fill="url(#bg)" filter="url(#shadow)"/>
+
+  <!-- Building body -->
+  <rect x="36" y="52" width="48" height="40" rx="3" fill="#f0f9ff" opacity="0.95"/>
+
+  <!-- Building windows -->
+  <rect x="42" y="58" width="10" height="10" rx="2" fill="#0ea5e9" opacity="0.8"/>
+  <rect x="55" y="58" width="10" height="10" rx="2" fill="#0ea5e9" opacity="0.8"/>
+  <rect x="68" y="58" width="10" height="10" rx="2" fill="#0ea5e9" opacity="0.8"/>
+  <rect x="42" y="72" width="10" height="10" rx="2" fill="#0ea5e9" opacity="0.8"/>
+  <rect x="55" y="72" width="10" height="10" rx="2" fill="#0ea5e9" opacity="0.8"/>
+  <rect x="68" y="72" width="10" height="10" rx="2" fill="#0ea5e9" opacity="0.8"/>
+
+  <!-- Door -->
+  <rect x="55" y="84" width="10" height="8" rx="1.5" fill="#0369a1"/>
+
+  <!-- Roof -->
+  <path d="M28 54 L60 32 L92 54 Z" fill="url(#roof)" opacity="0.95"/>
+
+  <!-- Smart signal arcs -->
+  <path d="M52 26 Q60 18 68 26" stroke="#fbbf24" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M46 22 Q60 10 74 22" stroke="#fbbf24" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M40 18 Q60 2 80 18" stroke="#fbbf24" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.4"/>
+
+  <!-- Key dot -->
+  <circle cx="60" cy="28" r="2.5" fill="#fbbf24"/>
+</svg>

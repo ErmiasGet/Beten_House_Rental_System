@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Smart ቤት ኪራይ",
+    "slug": "beten-homes-rent",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./src/assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0ea5e9"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.betenhomesrent.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/icon.png",
+        "backgroundColor": "#0ea5e9"
+      },
+      "package": "com.betenhomesrent.mobile"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./src/assets/notification-icon.png",
+          "color": "#0ea5e9"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "3e7c8149-4ffc-4bf4-8798-9acd5f7eae1b"
+      }
+    }
+  }
+}

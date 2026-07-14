@@ -1,0 +1,275 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  MANAGER
+  ACCOUNTANT
+}
+
+enum RoomStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+}
+
+enum ContractStatus {
+  ACTIVE
+  EXPIRED
+  TERMINATED
+  PENDING
+}
+
+enum PaymentStatus {
+  PAID
+  UNPAID
+  OVERDUE
+  PARTIAL
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  MOBILE_MONEY
+  CHECK
+}
+
+enum ExpenseCategory {
+  MAINTENANCE
+  REPAIR
+  ELECTRICITY
+  WATER
+  CLEANING
+  SECURITY
+  OTHER
+}
+
+enum NotificationType {
+  PAYMENT_DUE
+  PAYMENT_OVERDUE
+  PAYMENT_RECEIVED
+  CONTRACT_EXPIRING
+  CONTRACT_EXPIRED
+  ROOM_VACANT
+  MAINTENANCE_DUE
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+}
+
+model User {
+  id           String     @id @default(uuid())
+  fullName     String
+  email        String     @unique
+  phone        String
+  password     String
+  role         UserRole   @default(OWNER)
+  profileImage String?
+  isActive     Boolean    @default(true)
+  pushToken    String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  houses       House[]
+  expenses     Expense[]
+  notifications Notification[]
+  auditLogs    AuditLog[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model House {
+  id               String   @id @default(uuid())
+  name             String
+  address          String
+  description      String?
+  numberOfFloors   Int      @default(1)
+  totalRooms       Int      @default(0)
+  images           String[]
+  registrationDate DateTime @default(now())
+  ownerId          String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  owner            User     @relation(fields: [ownerId], references: [id])
+  rooms            Room[]
+  rentalContracts  RentalContract[]
+  expenses         Expense[]
+
+  @@index([ownerId])
+  @@index([name])
+}
+
+model Room {
+  id            String     @id @default(uuid())
+  roomNumber    String
+  floorNumber   Int        @default(1)
+  length        Float      @default(0)
+  width         Float      @default(0)
+  bedrooms      Int        @default(1)
+  bathrooms     Int        @default(1)
+  hasKitchen    Boolean    @default(false)
+  monthlyRent   Float
+  depositAmount Float      @default(0)
+  status        RoomStatus @default(AVAILABLE)
+  houseId       String
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  house         House      @relation(fields: [houseId], references: [id])
+  tenants       Tenant[]
+  rentalContracts RentalContract[]
+  payments      Payment[]
+
+  @@unique([houseId, roomNumber])
+  @@index([houseId])
+  @@index([status])
+}
+
+model Tenant {
+  id               String   @id @default(uuid())
+  fullName         String
+  profileImage     String?
+  phone            String
+  email            String?
+  gender           String?
+  nationalId       String   @unique
+  occupation          String?
+  emergencyName       String?
+  emergencyPhone      String?
+  emergencyAddress    String?
+  address             String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  roomId           String?
+  room             Room?    @relation(fields: [roomId], references: [id])
+  rentalContracts  RentalContract[]
+  payments         Payment[]
+
+  @@index([fullName])
+  @@index([phone])
+  @@index([nationalId])
+}
+
+model RentalContract {
+  id          String         @id @default(uuid())
+  tenantId    String
+  houseId     String
+  roomId      String
+  startDate   DateTime
+  monthlyRent Float
+  deposit     Float          @default(0)
+  paymentDay  Int            @default(1)
+  contractImage String?
+  status        ContractStatus @default(ACTIVE)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  tenant      Tenant         @relation(fields: [tenantId], references: [id])
+  house       House          @relation(fields: [houseId], references: [id])
+  room        Room           @relation(fields: [roomId], references: [id])
+  payments    Payment[]
+
+  @@index([tenantId])
+  @@index([houseId])
+  @@index([roomId])
+  @@index([status])
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  tenantId      String
+  roomId        String
+  contractId    String
+  amount        Float
+  amountPaid    Float         @default(0)
+  paymentDate   DateTime
+  paymentMethod PaymentMethod @default(CASH)
+  month         Int
+  year          Int
+  status        PaymentStatus @default(UNPAID)
+  receiptNumber String        @unique
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  tenant        Tenant        @relation(fields: [tenantId], references: [id])
+  room          Room          @relation(fields: [roomId], references: [id])
+  contract      RentalContract @relation(fields: [contractId], references: [id])
+
+  @@index([tenantId])
+  @@index([roomId])
+  @@index([contractId])
+  @@index([status])
+  @@index([month, year])
+  @@index([paymentDate])
+}
+
+model Expense {
+  id           String         @id @default(uuid())
+  houseId      String
+  category     ExpenseCategory
+  amount       Float
+  description  String
+  expenseDate  DateTime
+  receiptImage String?
+  recordedById String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  house        House          @relation(fields: [houseId], references: [id])
+  recordedBy   User           @relation(fields: [recordedById], references: [id])
+
+  @@index([houseId])
+  @@index([category])
+  @@index([expenseDate])
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  relatedId String?
+  createdAt DateTime         @default(now())
+
+  user      User             @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id        String      @id @default(uuid())
+  userId    String
+  action    AuditAction
+  entity    String
+  entityId  String
+  changes   Json?
+  ipAddress String?
+  createdAt DateTime    @default(now())
+
+  user      User        @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([entity, entityId])
+  @@index([createdAt])
+}

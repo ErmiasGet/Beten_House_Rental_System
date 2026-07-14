@@ -1,0 +1,46 @@
+{
+  "name": "beten-homes-rent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Beten Homes Rent - Smart Property Rental System",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm run dev --workspace=@beten-homes-rent/backend",
+    "dev:frontend": "npm run dev --workspace=@beten-homes-rent/frontend",
+    "dev:mobile": "npm run start --workspace=@beten-homes-rent/mobile",
+    "build": "npm run build --workspace=@beten-homes-rent/shared && npm run build --workspace=@beten-homes-rent/backend && npm run build --workspace=@beten-homes-rent/frontend",
+    "build:shared": "npm run build --workspace=@beten-homes-rent/shared",
+    "build:backend": "npm run build --workspace=@beten-homes-rent/backend",
+    "build:frontend": "npm run build --workspace=@beten-homes-rent/frontend",
+    "build:mobile": "npx tsc --noEmit --project mobile-app/tsconfig.json",
+    "build:all": "npm run build:shared && npm run build:backend && npm run build:frontend && npm run build:mobile",
+    "db:migrate": "npm run prisma:migrate --workspace=@beten-homes-rent/backend",
+    "db:seed": "npm run prisma:seed --workspace=@beten-homes-rent/backend",
+    "db:studio": "npm run prisma:studio --workspace=@beten-homes-rent/backend",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,json,css,md}\"",
+    "test": "npm run test --workspace=@beten-homes-rent/backend",
+    "clean": "npm run clean --workspace=@beten-homes-rent/shared && npm run clean --workspace=@beten-homes-rent/backend",
+    "docker:prod": "docker-compose -f docker-compose.yml up -d",
+    "docker:down": "docker-compose -f docker-compose.yml down",
+    "setup": "npm install && npm run build:shared && npm run db:migrate && npm run db:seed",
+    "postinstall": "echo Workspace install complete. Run 'npm run build:shared' to build shared package."
+  },
+  "workspaces": [
+    "shared",
+    "desktop-app/backend",
+    "desktop-app/frontend",
+    "mobile-app"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

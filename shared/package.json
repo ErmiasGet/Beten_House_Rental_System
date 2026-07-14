@@ -1,0 +1,19 @@
+{
+  "name": "@beten-homes-rent/shared",
+  "version": "1.0.0",
+  "description": "Shared types, constants, and utilities for Betora",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src/",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "rimraf": "^5.0.5",
+    "@types/node": "^20.11.0"
+  }
+}

@@ -1,0 +1,72 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+dist-electron/
+build/
+*.tsbuildinfo
+
+# Electron release
+release/
+*.blockmap
+builder-debug.yml
+builder-effective-config.yaml
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Uploads
+**/uploads/*
+!**/uploads/.gitkeep
+
+# Coverage
+coverage/
+
+# Firebase service account
+service-account.json
+
+# Docker
+docker-compose.override.yml
+
+# Mobile
+mobile-app/.expo/
+mobile-app/dist/
+mobile-app/*.jks
+mobile-app/*.p8
+mobile-app/*.p12
+mobile-app/*.key
+mobile-app/*.mobileprovision
+mobile-app/*.orig.*
+mobile-app/android/
+mobile-app/ios/
+
+# Misc
+*.pem
+*.cert
+.cache/
+tmp/
+nul
+clean.ps1
+nvm
