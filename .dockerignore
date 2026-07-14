@@ -17,10 +17,8 @@ logs
 *.cert
 service-account.json
 mobile-app
-desktop-app
 deployment
 documentation
-shared
 .expo
 android
 ios
