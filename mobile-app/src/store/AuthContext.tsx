@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { auth, isConfigured } from '../config/firebase';
 import * as Storage from '../utils/storage';
-import { authAPI } from '../services/api';
+import { authAPI, setOnUnauthorizedLogout } from '../services/api';
 
 let onAuthStateChanged: any;
 let signInWithEmailAndPassword: any;
@@ -46,6 +46,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setOnUnauthorizedLogout(() => {
+      setUser(null);
+      setToken(null);
+    });
+
     if (!isConfigured) {
       (async () => {
         try {

@@ -2,6 +2,12 @@ import { Platform } from 'react-native';
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import * as Storage from '../utils/storage';
 
+let onUnauthorizedCallback: (() => void) | null = null;
+
+export function setOnUnauthorizedLogout(callback: () => void) {
+  onUnauthorizedCallback = callback;
+}
+
 const DEV_API_URL =
   Platform.OS === 'web' ? 'http://localhost:5000/api/v1' : 'http://localhost:5000/api/v1';
 
@@ -29,6 +35,9 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       await Storage.deleteItemAsync('token');
       await Storage.deleteItemAsync('user');
+      if (onUnauthorizedCallback) {
+        onUnauthorizedCallback();
+      }
     }
     return Promise.reject(error);
   }
