@@ -105,6 +105,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { user: userData, token: newToken } = response.data.data;
       setUser(userData);
       setToken(newToken);
+      await Storage.setItemAsync('token', newToken);
+      await Storage.setItemAsync('user', JSON.stringify(userData));
     }
   };
 
