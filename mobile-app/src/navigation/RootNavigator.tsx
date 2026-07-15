@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../store/AuthContext';
 import { LoginScreen } from '../screens/Login/LoginScreen';
 import { DashboardScreen } from '../screens/Dashboard/DashboardScreen';
@@ -92,6 +93,7 @@ function TabIcon({
 
 function MainTabs() {
   const { unreadCount } = useNotifications();
+  const insets = useSafeAreaInsets();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -131,9 +133,9 @@ function MainTabs() {
           backgroundColor: '#ffffff',
           borderTopWidth: 1,
           borderTopColor: '#e2e8f0',
-          paddingBottom: 5,
+          paddingBottom: Math.max(insets.bottom, 8),
           paddingTop: 5,
-          height: 60,
+          height: 60 + Math.max(insets.bottom, 0),
         },
         tabBarLabelStyle: {
           fontSize: 10,

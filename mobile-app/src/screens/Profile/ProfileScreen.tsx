@@ -16,7 +16,7 @@ import { useAuth } from '../../store/AuthContext';
 import { authAPI } from '../../services/api';
 
 export function ProfileScreen({ navigation }: any) {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, logout } = useAuth();
 
   const [fullName, setFullName] = useState(user?.fullName || '');
   const [phone, setPhone] = useState(user?.phone || '');
@@ -100,6 +100,13 @@ export function ProfileScreen({ navigation }: any) {
     } finally {
       setSavingPassword(false);
     }
+  };
+
+  const handleLogout = () => {
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Logout', style: 'destructive', onPress: () => logout() },
+    ]);
   };
 
   return (
@@ -270,6 +277,11 @@ export function ProfileScreen({ navigation }: any) {
           </TouchableOpacity>
         </View>
 
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Ionicons name="log-out-outline" size={20} color="#dc2626" />
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
+
         <View style={{ height: 40 }} />
       </ScrollView>
     </KeyboardAvoidingView>
@@ -324,4 +336,17 @@ const styles = StyleSheet.create({
   secondaryButton: { backgroundColor: '#f8fafc', borderWidth: 1, borderColor: '#e2e8f0' },
   buttonText: { color: '#ffffff', fontSize: 15, fontWeight: '600' },
   secondaryButtonText: { color: '#3b82f6', fontSize: 15, fontWeight: '600' },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#fef2f2',
+    borderWidth: 1,
+    borderColor: '#fecaca',
+    borderRadius: 12,
+    paddingVertical: 14,
+    margin: 16,
+  },
+  logoutText: { color: '#dc2626', fontSize: 16, fontWeight: '600' },
 });

@@ -54,19 +54,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!isConfigured) {
       (async () => {
         try {
-          const storedToken = await Storage.getItemAsync('token');
-          const storedUser = await Storage.getItemAsync('user');
-          if (storedToken && storedUser) {
-            setToken(storedToken);
-            try {
-              setUser(JSON.parse(storedUser));
-            } catch (error) {
-              console.error('Failed to parse stored user:', error);
-              await Storage.deleteItemAsync('user');
-            }
-          }
+          await Storage.deleteItemAsync('token');
+          await Storage.deleteItemAsync('user');
         } catch (error) {
-          console.error('Failed to load auth data:', error);
+          console.error('Failed to clear auth data:', error);
         } finally {
           setIsLoading(false);
         }
@@ -114,8 +105,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { user: userData, token: newToken } = response.data.data;
       setUser(userData);
       setToken(newToken);
-      await Storage.setItemAsync('token', newToken);
-      await Storage.setItemAsync('user', JSON.stringify(userData));
     }
   };
 
@@ -132,8 +121,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setUser(null);
     setToken(null);
-    await Storage.deleteItemAsync('token');
-    await Storage.deleteItemAsync('user');
   };
 
   const forgotPassword = async (email: string) => {
@@ -148,7 +135,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!user) return;
     const updatedUser = { ...user, ...data };
     setUser(updatedUser);
-    Storage.setItemAsync('user', JSON.stringify(updatedUser));
   };
 
   return (
