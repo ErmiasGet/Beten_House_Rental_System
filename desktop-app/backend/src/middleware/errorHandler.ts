@@ -52,6 +52,22 @@ export const errorHandler = (
     return;
   }
 
+  if (errorCode === 'P2003') {
+    res.status(400).json({
+      success: false,
+      message: 'Cannot delete this item because it is still referenced by other records.',
+    });
+    return;
+  }
+
+  if (errorCode === 'P2025') {
+    res.status(404).json({
+      success: false,
+      message: 'Record not found.',
+    });
+    return;
+  }
+
   res.status(500).json({
     success: false,
     message: 'Internal server error',

@@ -7,7 +7,7 @@ const DEV_API_URL =
 
 const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_URL ||
-  (__DEV__ ? DEV_API_URL : 'https://your-app.up.railway.app/api/v1');
+  (__DEV__ ? DEV_API_URL : 'https://beten-backend.onrender.com/api/v1');
 
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

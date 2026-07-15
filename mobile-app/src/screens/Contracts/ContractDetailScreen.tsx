@@ -17,7 +17,8 @@ import { contractsAPI } from '../../services/api';
 import { formatCurrency, formatDate } from '@beten-homes-rent/shared';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-const API_BASE = process.env.EXPO_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:5000';
+const API_BASE =
+  process.env.EXPO_PUBLIC_API_URL?.replace('/api/v1', '') || 'https://beten-backend.onrender.com';
 
 interface ContractDetailProps {
   route: any;

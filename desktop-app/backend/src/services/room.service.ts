@@ -108,7 +108,12 @@ export class RoomService {
     const room = await prisma.room.findUnique({ where: { id } });
     if (!room) throw new NotFoundError('Room not found');
 
-    await prisma.room.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+      await tx.payment.deleteMany({ where: { roomId: id } });
+      await tx.rentalContract.deleteMany({ where: { roomId: id } });
+      await tx.tenant.updateMany({ where: { roomId: id }, data: { roomId: null } });
+      await tx.room.delete({ where: { id } });
+    });
   }
 
   async getVacantRooms(houseId?: string) {

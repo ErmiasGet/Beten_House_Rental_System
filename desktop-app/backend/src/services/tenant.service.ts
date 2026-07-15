@@ -188,6 +188,24 @@ export class TenantService {
     const tenant = await prisma.tenant.findUnique({ where: { id } });
     if (!tenant) throw new NotFoundError('Tenant not found');
 
-    await prisma.tenant.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+      const contracts = await tx.rentalContract.findMany({
+        where: { tenantId: id },
+        select: { roomId: true },
+      });
+      const roomIds = contracts.map((c) => c.roomId).filter(Boolean) as string[];
+
+      await tx.payment.deleteMany({ where: { tenantId: id } });
+      await tx.rentalContract.deleteMany({ where: { tenantId: id } });
+
+      if (roomIds.length > 0) {
+        await tx.room.updateMany({
+          where: { id: { in: roomIds } },
+          data: { status: 'AVAILABLE' },
+        });
+      }
+
+      await tx.tenant.delete({ where: { id } });
+    });
   }
 }

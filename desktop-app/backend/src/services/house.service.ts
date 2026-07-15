@@ -101,7 +101,28 @@ export class HouseService {
     const house = await prisma.house.findUnique({ where: { id } });
     if (!house) throw new NotFoundError('House not found');
 
-    await prisma.house.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+      const rooms = await tx.room.findMany({ where: { houseId: id }, select: { id: true } });
+      const roomIds = rooms.map((r) => r.id);
+
+      await tx.expense.deleteMany({ where: { houseId: id } });
+
+      if (roomIds.length > 0) {
+        await tx.payment.deleteMany({ where: { roomId: { in: roomIds } } });
+      }
+
+      await tx.rentalContract.deleteMany({ where: { houseId: id } });
+
+      if (roomIds.length > 0) {
+        await tx.tenant.updateMany({
+          where: { roomId: { in: roomIds } },
+          data: { roomId: null },
+        });
+        await tx.room.deleteMany({ where: { houseId: id } });
+      }
+
+      await tx.house.delete({ where: { id } });
+    });
   }
 
   async search(query: string, userId: string) {
