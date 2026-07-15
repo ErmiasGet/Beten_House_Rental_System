@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import prisma from '../config/database';
+import prisma, { withQueryRetry } from '../config/database';
 import { NotificationService } from '../services/notification.service';
 import { sendPushNotification } from '../services/push.service';
 import { logger } from '../utils/logger';
@@ -52,34 +52,38 @@ export async function checkOverduePayments(): Promise<void> {
   const currentMonth = currentDate.getMonth() + 1;
   const currentYear = currentDate.getFullYear();
 
-  const overduePayments = await prisma.payment.findMany({
-    where: {
-      status: { in: ['UNPAID', 'PARTIAL'] },
-      OR: [
-        { year: { lt: currentYear } },
-        { year: currentYear, month: { lt: currentMonth } },
-        {
-          year: currentYear,
-          month: currentMonth,
-          contract: { paymentDay: { lt: currentDate.getDate() } },
-        },
-      ],
-    },
-    include: {
-      tenant: true,
-      room: { include: { house: { include: { owner: true } } } },
-      contract: true,
-    },
-  });
+  const overduePayments = await withQueryRetry(() =>
+    prisma.payment.findMany({
+      where: {
+        status: { in: ['UNPAID', 'PARTIAL'] },
+        OR: [
+          { year: { lt: currentYear } },
+          { year: currentYear, month: { lt: currentMonth } },
+          {
+            year: currentYear,
+            month: currentMonth,
+            contract: { paymentDay: { lt: currentDate.getDate() } },
+          },
+        ],
+      },
+      include: {
+        tenant: true,
+        room: { include: { house: { include: { owner: true } } } },
+        contract: true,
+      },
+    })
+  );
 
   for (const payment of overduePayments) {
     const newStatus = payment.status === 'PARTIAL' ? 'PARTIAL' : 'OVERDUE';
 
     if (payment.status !== newStatus && payment.status !== 'OVERDUE') {
-      await prisma.payment.update({
-        where: { id: payment.id },
-        data: { status: payment.status === 'PARTIAL' ? 'PARTIAL' : 'OVERDUE' },
-      });
+      await withQueryRetry(() =>
+        prisma.payment.update({
+          where: { id: payment.id },
+          data: { status: payment.status === 'PARTIAL' ? 'PARTIAL' : 'OVERDUE' },
+        })
+      );
     }
 
     const remaining = payment.amount - payment.amountPaid;
@@ -104,44 +108,50 @@ export async function checkUpcomingPayments(): Promise<void> {
   const currentMonth = currentDate.getMonth() + 1;
   const currentYear = currentDate.getFullYear();
 
-  const activeContracts = await prisma.rentalContract.findMany({
-    where: {
-      status: 'ACTIVE',
-      paymentDay: currentDate.getDate(),
-    },
-    include: {
-      tenant: true,
-      room: { include: { house: { include: { owner: true } } } },
-    },
-  });
+  const activeContracts = await withQueryRetry(() =>
+    prisma.rentalContract.findMany({
+      where: {
+        status: 'ACTIVE',
+        paymentDay: currentDate.getDate(),
+      },
+      include: {
+        tenant: true,
+        room: { include: { house: { include: { owner: true } } } },
+      },
+    })
+  );
 
   for (const contract of activeContracts) {
-    const existingPayment = await prisma.payment.findFirst({
-      where: {
-        contractId: contract.id,
-        month: currentMonth,
-        year: currentYear,
-      },
-    });
+    const existingPayment = await withQueryRetry(() =>
+      prisma.payment.findFirst({
+        where: {
+          contractId: contract.id,
+          month: currentMonth,
+          year: currentYear,
+        },
+      })
+    );
 
     if (!existingPayment) {
       const dueDate = new Date(currentYear, currentMonth - 1, contract.paymentDay);
 
-      await prisma.payment.create({
-        data: {
-          tenantId: contract.tenantId,
-          roomId: contract.roomId,
-          contractId: contract.id,
-          amount: contract.monthlyRent,
-          amountPaid: 0,
-          paymentDate: dueDate,
-          paymentMethod: 'CASH',
-          month: currentMonth,
-          year: currentYear,
-          status: 'UNPAID',
-          receiptNumber: `AUTO-${currentYear}${String(currentMonth).padStart(2, '0')}${String(contract.tenantId).slice(0, 4)}`,
-        },
-      });
+      await withQueryRetry(() =>
+        prisma.payment.create({
+          data: {
+            tenantId: contract.tenantId,
+            roomId: contract.roomId,
+            contractId: contract.id,
+            amount: contract.monthlyRent,
+            amountPaid: 0,
+            paymentDate: dueDate,
+            paymentMethod: 'CASH',
+            month: currentMonth,
+            year: currentYear,
+            status: 'UNPAID',
+            receiptNumber: `AUTO-${currentYear}${String(currentMonth).padStart(2, '0')}${String(contract.tenantId).slice(0, 4)}`,
+          },
+        })
+      );
 
       await notifyOwner(
         contract.room.house.owner.id,

@@ -25,58 +25,65 @@ export class TenantService {
       if (!room) throw new NotFoundError('Room not found');
       if (room.status !== 'AVAILABLE') throw new BadRequestError('Room is not available');
 
-      return prisma.$transaction(async (tx) => {
-        const tenant = await tx.tenant.create({
-          data: {
-            fullName: data.fullName,
-            phone: data.phone,
-            email: data.email,
-            gender: data.gender,
-            nationalId: data.nationalId,
-            occupation: data.occupation,
-            emergencyName: data.emergencyName,
-            emergencyPhone: data.emergencyPhone,
-            emergencyAddress: data.emergencyAddress,
-            address: data.address,
-            profileImage: data.profileImage,
-            roomId: data.roomId,
-          },
-        });
-
-        const startDate = data.startDate ? new Date(data.startDate) : new Date();
-        const paymentDay = Number(data.paymentDay) || 1;
-
-        await tx.rentalContract.create({
-          data: {
-            tenantId: tenant.id,
-            houseId: room.houseId,
-            roomId: data.roomId!,
-            startDate,
-            monthlyRent: room.monthlyRent,
-            deposit: Number(data.deposit ?? room.depositAmount),
-            paymentDay,
-            contractImage: data.contractImage,
-          },
-        });
-
-        await tx.room.update({
-          where: { id: data.roomId },
-          data: { status: 'OCCUPIED' },
-        });
-
-        return tx.tenant.findUnique({
-          where: { id: tenant.id },
-          include: {
-            room: {
-              include: { house: { select: { id: true, name: true } } },
+      return prisma.$transaction(
+        async (
+          tx: Omit<
+            typeof prisma,
+            '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+          >
+        ) => {
+          const tenant = await tx.tenant.create({
+            data: {
+              fullName: data.fullName,
+              phone: data.phone,
+              email: data.email,
+              gender: data.gender,
+              nationalId: data.nationalId,
+              occupation: data.occupation,
+              emergencyName: data.emergencyName,
+              emergencyPhone: data.emergencyPhone,
+              emergencyAddress: data.emergencyAddress,
+              address: data.address,
+              profileImage: data.profileImage,
+              roomId: data.roomId,
             },
-            rentalContracts: {
-              take: 1,
-              orderBy: { createdAt: 'desc' },
+          });
+
+          const startDate = data.startDate ? new Date(data.startDate) : new Date();
+          const paymentDay = Number(data.paymentDay) || 1;
+
+          await tx.rentalContract.create({
+            data: {
+              tenantId: tenant.id,
+              houseId: room.houseId,
+              roomId: data.roomId!,
+              startDate,
+              monthlyRent: room.monthlyRent,
+              deposit: Number(data.deposit ?? room.depositAmount),
+              paymentDay,
+              contractImage: data.contractImage,
             },
-          },
-        });
-      });
+          });
+
+          await tx.room.update({
+            where: { id: data.roomId },
+            data: { status: 'OCCUPIED' },
+          });
+
+          return tx.tenant.findUnique({
+            where: { id: tenant.id },
+            include: {
+              room: {
+                include: { house: { select: { id: true, name: true } } },
+              },
+              rentalContracts: {
+                take: 1,
+                orderBy: { createdAt: 'desc' },
+              },
+            },
+          });
+        }
+      );
     }
 
     const { contractImage, startDate, paymentDay, deposit, ...tenantData } = data;
@@ -96,7 +103,7 @@ export class TenantService {
       ];
     }
 
-    const [data, total] = await Promise.all([
+    const [data, total]: [any[], number] = await Promise.all([
       withQueryRetry(() =>
         prisma.tenant.findMany({
           where,

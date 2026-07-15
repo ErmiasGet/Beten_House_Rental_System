@@ -1,88 +1,101 @@
-import prisma from '../config/database';
+import prisma, { withQueryRetry } from '../config/database';
 import { IDashboardStats, IRecentActivity } from '@beten-homes-rent/shared';
 
 export class DashboardService {
   async getStats(userId: string): Promise<IDashboardStats> {
-    const houses = await prisma.house.findMany({
-      where: { ownerId: userId },
-      include: {
-        rooms: true,
-      },
-    });
+    const houses = await withQueryRetry(() =>
+      prisma.house.findMany({
+        where: { ownerId: userId },
+        include: {
+          rooms: true,
+        },
+      })
+    );
 
     const totalHouses = houses.length;
-    const totalRooms = houses.reduce((sum, h) => sum + h.rooms.length, 0);
+    const totalRooms = houses.reduce((sum: number, h: any) => sum + h.rooms.length, 0);
     const occupiedRooms = houses.reduce(
-      (sum, h) => sum + h.rooms.filter((r) => r.status === 'OCCUPIED').length,
+      (sum: number, h: any) => sum + h.rooms.filter((r: any) => r.status === 'OCCUPIED').length,
       0
     );
     const vacantRooms = houses.reduce(
-      (sum, h) => sum + h.rooms.filter((r) => r.status === 'AVAILABLE').length,
+      (sum: number, h: any) => sum + h.rooms.filter((r: any) => r.status === 'AVAILABLE').length,
       0
     );
 
     const now = new Date();
     const currentMonth = now.getMonth() + 1;
     const currentYear = now.getFullYear();
-    const monthlyIncome = await prisma.payment.aggregate({
-      where: {
-        status: 'PAID',
-        month: currentMonth,
-        year: currentYear,
-        room: {
-          house: {
-            ownerId: userId,
+    const monthlyIncome = await withQueryRetry(() =>
+      prisma.payment.aggregate({
+        where: {
+          status: 'PAID',
+          month: currentMonth,
+          year: currentYear,
+          room: {
+            house: {
+              ownerId: userId,
+            },
           },
         },
-      },
-      _sum: { amount: true },
-    });
+        _sum: { amount: true },
+      })
+    );
 
-    const pendingPayments = await prisma.payment.count({
-      where: {
-        status: 'UNPAID',
-        month: currentMonth,
-        year: currentYear,
-        room: {
-          house: {
-            ownerId: userId,
+    const pendingPayments = await withQueryRetry(() =>
+      prisma.payment.count({
+        where: {
+          status: 'UNPAID',
+          month: currentMonth,
+          year: currentYear,
+          room: {
+            house: {
+              ownerId: userId,
+            },
           },
         },
-      },
-    });
+      })
+    );
 
-    const overduePayments = await prisma.payment.count({
-      where: {
-        room: {
-          house: {
-            ownerId: userId,
+    const overduePayments = await withQueryRetry(() =>
+      prisma.payment.count({
+        where: {
+          room: {
+            house: {
+              ownerId: userId,
+            },
           },
+          OR: [
+            { status: 'OVERDUE' },
+            { status: 'PARTIAL' },
+            {
+              status: 'UNPAID',
+              OR: [
+                { year: { lt: currentYear } },
+                { year: currentYear, month: { lt: currentMonth } },
+              ],
+            },
+          ],
         },
-        OR: [
-          { status: 'OVERDUE' },
-          { status: 'PARTIAL' },
-          {
-            status: 'UNPAID',
-            OR: [{ year: { lt: currentYear } }, { year: currentYear, month: { lt: currentMonth } }],
-          },
-        ],
-      },
-    });
+      })
+    );
 
-    const outstandingBalance = await prisma.payment.aggregate({
-      where: {
-        room: {
-          house: {
-            ownerId: userId,
+    const outstandingBalance = await withQueryRetry(() =>
+      prisma.payment.aggregate({
+        where: {
+          room: {
+            house: {
+              ownerId: userId,
+            },
           },
+          status: { in: ['UNPAID', 'OVERDUE', 'PARTIAL'] },
         },
-        status: { in: ['UNPAID', 'OVERDUE', 'PARTIAL'] },
-      },
-      _sum: {
-        amount: true,
-        amountPaid: true,
-      },
-    });
+        _sum: {
+          amount: true,
+          amountPaid: true,
+        },
+      })
+    );
 
     const totalOutstanding =
       (outstandingBalance._sum.amount || 0) - (outstandingBalance._sum.amountPaid || 0);
@@ -102,21 +115,23 @@ export class DashboardService {
   }
 
   async getOutstandingBalance(userId: string) {
-    const result = await prisma.payment.aggregate({
-      where: {
-        room: {
-          house: {
-            ownerId: userId,
+    const result = await withQueryRetry(() =>
+      prisma.payment.aggregate({
+        where: {
+          room: {
+            house: {
+              ownerId: userId,
+            },
           },
+          status: { in: ['UNPAID', 'OVERDUE', 'PARTIAL'] },
         },
-        status: { in: ['UNPAID', 'OVERDUE', 'PARTIAL'] },
-      },
-      _sum: {
-        amount: true,
-        amountPaid: true,
-      },
-      _count: true,
-    });
+        _sum: {
+          amount: true,
+          amountPaid: true,
+        },
+        _count: true,
+      })
+    );
 
     return {
       totalOwed: result._sum.amount || 0,
@@ -129,19 +144,21 @@ export class DashboardService {
   private async getRecentActivities(userId: string): Promise<IRecentActivity[]> {
     const activities: IRecentActivity[] = [];
 
-    const recentPayments = await prisma.payment.findMany({
-      where: {
-        room: { house: { ownerId: userId } },
-      },
-      include: {
-        tenant: true,
-        room: true,
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 5,
-    });
+    const recentPayments = await withQueryRetry(() =>
+      prisma.payment.findMany({
+        where: {
+          room: { house: { ownerId: userId } },
+        },
+        include: {
+          tenant: true,
+          room: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+      })
+    );
 
-    recentPayments.forEach((p) => {
+    recentPayments.forEach((p: any) => {
       const paidLabel =
         p.amountPaid < p.amount
           ? `partially paid ${p.amountPaid} of ${p.amount}`
@@ -155,19 +172,21 @@ export class DashboardService {
       });
     });
 
-    const recentContracts = await prisma.rentalContract.findMany({
-      where: {
-        house: { ownerId: userId },
-      },
-      include: {
-        tenant: true,
-        room: true,
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 5,
-    });
+    const recentContracts = await withQueryRetry(() =>
+      prisma.rentalContract.findMany({
+        where: {
+          house: { ownerId: userId },
+        },
+        include: {
+          tenant: true,
+          room: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+      })
+    );
 
-    recentContracts.forEach((c) => {
+    recentContracts.forEach((c: any) => {
       activities.push({
         id: c.id,
         action: 'Contract Created',

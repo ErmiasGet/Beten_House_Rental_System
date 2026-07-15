@@ -15,7 +15,7 @@ export class NotificationService {
   async findAll(userId: string, page: number = 1, limit: number = 20) {
     const skip = (page - 1) * limit;
 
-    const [data, total, unreadCount] = await Promise.all([
+    const [data, total, unreadCount]: [any[], number, number] = await Promise.all([
       withQueryRetry(() =>
         prisma.notification.findMany({
           where: { userId },

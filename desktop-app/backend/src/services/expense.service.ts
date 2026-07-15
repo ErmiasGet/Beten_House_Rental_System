@@ -42,7 +42,7 @@ export class ExpenseService {
       if (filters.endDate) where.expenseDate.lte = filters.endDate;
     }
 
-    const [data, total] = await Promise.all([
+    const [data, total]: [any[], number] = await Promise.all([
       withQueryRetry(() =>
         prisma.expense.findMany({
           where,

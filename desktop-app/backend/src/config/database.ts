@@ -1,4 +1,5 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { PrismaClientKnownRequestError as PrismaKnownError } from '@prisma/client/runtime/library';
 import { logger } from '../utils/logger';
 
 const prisma = new PrismaClient({
@@ -46,8 +47,12 @@ export async function connectWithRetry(
 }
 
 function isTransientError(error: unknown): boolean {
-  if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    return ['P1001', 'P1002', 'P1003', 'P1008', 'P1017'].includes(error.code);
+  if (
+    error instanceof Error &&
+    'code' in error &&
+    typeof (error as Record<string, unknown>).code === 'string'
+  ) {
+    return ['P1001', 'P1002', 'P1003', 'P1008', 'P1017'].includes((error as { code: string }).code);
   }
   if (error instanceof Error) {
     const msg = error.message.toLowerCase();

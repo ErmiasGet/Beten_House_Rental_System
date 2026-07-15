@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError, ValidationError, DatabaseError } from '../utils/errors';
 import { logger } from '../utils/logger';
-import { Prisma } from '@prisma/client';
 
 export const errorHandler = (
   err: Error,
@@ -40,10 +39,11 @@ export const errorHandler = (
     return;
   }
 
-  if (
-    err instanceof Prisma.PrismaClientKnownRequestError &&
-    ['P1001', 'P1002', 'P1003', 'P1008', 'P1017'].includes(err.code)
-  ) {
+  const errorCode =
+    'code' in err && typeof (err as Record<string, unknown>).code === 'string'
+      ? (err as { code: string }).code
+      : null;
+  if (errorCode && ['P1001', 'P1002', 'P1003', 'P1008', 'P1017'].includes(errorCode)) {
     const dbError = new DatabaseError('Database temporarily unavailable. Please try again.');
     res.status(dbError.statusCode).json({
       success: false,

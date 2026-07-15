@@ -1,6 +1,11 @@
 import prisma, { withQueryRetry } from '../config/database';
 import { NotFoundError, BadRequestError } from '../utils/errors';
 
+type TransactionClient = Omit<
+  typeof prisma,
+  '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+>;
+
 export class ContractService {
   async create(data: {
     tenantId: string;
@@ -15,7 +20,7 @@ export class ContractService {
     if (!room) throw new NotFoundError('Room not found');
     if (room.status !== 'AVAILABLE') throw new BadRequestError('Room is not available');
 
-    const contract = await prisma.$transaction(async (tx) => {
+    const contract = await prisma.$transaction(async (tx: TransactionClient) => {
       const newContract = await tx.rentalContract.create({ data });
 
       await tx.room.update({
@@ -46,7 +51,7 @@ export class ContractService {
     const where: any = {};
     if (status) where.status = status;
 
-    const [data, total] = await Promise.all([
+    const [data, total]: [any[], number] = await Promise.all([
       withQueryRetry(() =>
         prisma.rentalContract.findMany({
           where,
@@ -96,7 +101,7 @@ export class ContractService {
     if (contract.status !== 'ACTIVE')
       throw new BadRequestError('Only active contracts can be terminated');
 
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: TransactionClient) => {
       const updated = await tx.rentalContract.update({
         where: { id },
         data: { status: 'TERMINATED' },

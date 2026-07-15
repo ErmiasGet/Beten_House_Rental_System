@@ -1,5 +1,11 @@
 import prisma from '../config/database';
-import { IIncomeReport, IExpenseReport, IOccupancyReport, IPayment, IExpense } from '@beten-homes-rent/shared';
+import {
+  IIncomeReport,
+  IExpenseReport,
+  IOccupancyReport,
+  IPayment,
+  IExpense,
+} from '@beten-homes-rent/shared';
 import PDFDocument from 'pdfkit';
 import { Response } from 'express';
 
@@ -18,10 +24,10 @@ export class ReportService {
       orderBy: { paymentDate: 'asc' },
     });
 
-    const totalIncome = payments.reduce((sum, p) => sum + p.amount, 0);
+    const totalIncome = payments.reduce((sum: number, p: any) => sum + p.amount, 0);
 
     const monthlyMap = new Map<string, number>();
-    payments.forEach((p) => {
+    payments.forEach((p: any) => {
       const key = `${p.year}-${p.month}`;
       monthlyMap.set(key, (monthlyMap.get(key) || 0) + p.amount);
     });
@@ -46,10 +52,10 @@ export class ReportService {
       orderBy: { expenseDate: 'asc' },
     });
 
-    const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+    const totalExpenses = expenses.reduce((sum: number, e: any) => sum + e.amount, 0);
 
     const categoryMap = new Map<string, { amount: number; count: number }>();
-    expenses.forEach((e) => {
+    expenses.forEach((e: any) => {
       const current = categoryMap.get(e.category) || { amount: 0, count: 0 };
       categoryMap.set(e.category, {
         amount: current.amount + e.amount,
@@ -73,22 +79,22 @@ export class ReportService {
       },
     });
 
-    const totalRooms = houses.reduce((sum, h) => sum + h.rooms.length, 0);
+    const totalRooms = houses.reduce((sum: number, h: any) => sum + h.rooms.length, 0);
     const occupiedRooms = houses.reduce(
-      (sum, h) => sum + h.rooms.filter((r) => r.status === 'OCCUPIED').length,
+      (sum: number, h: any) => sum + h.rooms.filter((r: any) => r.status === 'OCCUPIED').length,
       0
     );
     const vacantRooms = houses.reduce(
-      (sum, h) => sum + h.rooms.filter((r) => r.status === 'AVAILABLE').length,
+      (sum: number, h: any) => sum + h.rooms.filter((r: any) => r.status === 'AVAILABLE').length,
       0
     );
 
     const occupancyRate = totalRooms > 0 ? (occupiedRooms / totalRooms) * 100 : 0;
 
-    const houseBreakdown = houses.map((h) => ({
+    const houseBreakdown = houses.map((h: any) => ({
       houseId: h.id,
       houseName: h.name,
-      occupied: h.rooms.filter((r) => r.status === 'OCCUPIED').length,
+      occupied: h.rooms.filter((r: any) => r.status === 'OCCUPIED').length,
       total: h.rooms.length,
     }));
 

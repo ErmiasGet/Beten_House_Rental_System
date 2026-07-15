@@ -30,7 +30,7 @@ export class RoomService {
     const where = houseId ? { houseId } : {};
     const skip = (page - 1) * limit;
 
-    const [data, total] = await Promise.all([
+    const [data, total]: [any[], number] = await Promise.all([
       withQueryRetry(() =>
         prisma.room.findMany({
           where,

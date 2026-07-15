@@ -29,7 +29,7 @@ export class HouseService {
 
   async findAll(userId: string, page: number = 1, limit: number = 10) {
     const skip = (page - 1) * limit;
-    const [data, total] = await Promise.all([
+    const [data, total]: [any[], number] = await Promise.all([
       withQueryRetry(() =>
         prisma.house.findMany({
           where: { ownerId: userId },

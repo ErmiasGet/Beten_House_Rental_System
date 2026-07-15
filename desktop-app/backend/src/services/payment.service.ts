@@ -112,7 +112,7 @@ export class PaymentService {
       where.tenantId = filters.tenantId;
     }
 
-    const [data, total] = await Promise.all([
+    const [data, total]: [any[], number] = await Promise.all([
       withQueryRetry(() =>
         prisma.payment.findMany({
           where,
@@ -276,7 +276,10 @@ export class PaymentService {
       throw new BadRequestError('No overdue payments found for this tenant');
     }
 
-    const totalOutstanding = overduePayments.reduce((sum, p) => sum + (p.amount - p.amountPaid), 0);
+    const totalOutstanding = overduePayments.reduce(
+      (sum: number, p: any) => sum + (p.amount - p.amountPaid),
+      0
+    );
 
     const paymentAmount = Math.min(amount, totalOutstanding);
     let remaining = paymentAmount;
@@ -366,7 +369,7 @@ export class PaymentService {
       orderBy: [{ year: 'asc' }, { month: 'asc' }],
     });
 
-    const records = payments.map((p) => ({
+    const records = payments.map((p: any) => ({
       id: p.id,
       month: p.month,
       year: p.year,
@@ -377,8 +380,8 @@ export class PaymentService {
       roomNumber: p.room?.roomNumber,
     }));
 
-    const totalOwed = payments.reduce((sum, p) => sum + p.amount, 0);
-    const totalPaid = payments.reduce((sum, p) => sum + p.amountPaid, 0);
+    const totalOwed = payments.reduce((sum: number, p: any) => sum + p.amount, 0);
+    const totalPaid = payments.reduce((sum: number, p: any) => sum + p.amountPaid, 0);
 
     return {
       tenantId,
