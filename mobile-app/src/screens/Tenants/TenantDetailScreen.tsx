@@ -86,7 +86,6 @@ export function TenantDetailScreen({ route, navigation }: TenantDetailProps) {
         <Text style={styles.name}>{tenant.fullName}</Text>
         <Text style={styles.role}>{tenant.occupation || 'No occupation'}</Text>
       </View>
-
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Contact Information</Text>
         <View style={styles.infoRow}>
