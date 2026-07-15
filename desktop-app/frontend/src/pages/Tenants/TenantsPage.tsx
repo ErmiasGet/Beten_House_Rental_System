@@ -169,13 +169,46 @@ export function TenantsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      (formData.emergencyName && formData.emergencyName === formData.fullName) ||
-      (formData.emergencyPhone && formData.emergencyPhone === formData.phone)
-    ) {
+    if (!formData.emergencyName.trim()) {
       toast({
         title: 'Validation Error',
-        description: 'Emergency contact name and phone must be different from tenant information',
+        description: 'Emergency contact name is required',
+        variant: 'destructive',
+      });
+      setSubmitting(false);
+      return;
+    }
+    if (!formData.emergencyPhone.trim()) {
+      toast({
+        title: 'Validation Error',
+        description: 'Emergency contact phone is required',
+        variant: 'destructive',
+      });
+      setSubmitting(false);
+      return;
+    }
+    if (!formData.emergencyAddress.trim()) {
+      toast({
+        title: 'Validation Error',
+        description: 'Emergency contact address is required',
+        variant: 'destructive',
+      });
+      setSubmitting(false);
+      return;
+    }
+    if (formData.emergencyName === formData.fullName) {
+      toast({
+        title: 'Validation Error',
+        description: 'Emergency contact name must be different from tenant name',
+        variant: 'destructive',
+      });
+      setSubmitting(false);
+      return;
+    }
+    if (formData.emergencyPhone === formData.phone) {
+      toast({
+        title: 'Validation Error',
+        description: 'Emergency contact phone must be different from tenant phone',
         variant: 'destructive',
       });
       setSubmitting(false);

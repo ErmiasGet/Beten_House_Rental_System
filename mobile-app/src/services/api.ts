@@ -75,7 +75,7 @@ export const roomsAPI = {
 export const tenantsAPI = {
   getAll: (params?: any) => api.get('/tenants', { params }),
   getById: (id: string) => api.get(`/tenants/${id}`),
-  create: (data: any) => api.post('/tenants', data),
+  create: (data: any, headers?: any) => api.post('/tenants', data, { headers }),
   update: (id: string, data: any) => api.put(`/tenants/${id}`, data),
   delete: (id: string) => api.delete(`/tenants/${id}`),
 };

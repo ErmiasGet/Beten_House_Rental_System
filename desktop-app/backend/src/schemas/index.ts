@@ -53,9 +53,9 @@ export const tenantSchema = z.object({
         .regex(/^\d+$/, 'National ID must contain only numbers')
         .length(16, 'National ID must be exactly 16 digits'),
       occupation: z.string().optional(),
-      emergencyName: z.string().optional(),
-      emergencyPhone: z.string().optional(),
-      emergencyAddress: z.string().optional(),
+      emergencyName: z.string().min(2, 'Emergency contact name is required'),
+      emergencyPhone: z.string().regex(/^\d{10}$/, 'Emergency phone must be exactly 10 digits'),
+      emergencyAddress: z.string().min(1, 'Emergency contact address is required'),
       address: z.string().optional(),
       roomId: z.string().uuid('Invalid room ID').optional(),
       startDate: z.string().optional(),
@@ -64,8 +64,8 @@ export const tenantSchema = z.object({
     })
     .refine(
       (data) => {
-        if (data.emergencyName && data.emergencyName === data.fullName) return false;
-        if (data.emergencyPhone && data.emergencyPhone === data.phone) return false;
+        if (data.emergencyName === data.fullName) return false;
+        if (data.emergencyPhone === data.phone) return false;
         return true;
       },
       { message: 'Emergency contact name and phone must be different from tenant information' }

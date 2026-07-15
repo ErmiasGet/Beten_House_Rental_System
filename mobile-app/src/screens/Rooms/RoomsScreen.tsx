@@ -257,10 +257,6 @@ export function RoomsScreen() {
         />
       )}
 
-      <TouchableOpacity style={styles.fab} onPress={openCreate}>
-        <Ionicons name="add" size={28} color="#ffffff" />
-      </TouchableOpacity>
-
       <Modal visible={modalVisible} animationType="slide" transparent>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

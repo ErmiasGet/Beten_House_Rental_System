@@ -14,10 +14,13 @@ import {
   Platform,
   ScrollView,
   Switch,
+  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { tenantsAPI, housesAPI, roomsAPI } from '../../services/api';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import * as ImagePicker from 'expo-image-picker';
 
 export function TenantsListScreen() {
   const navigation = useNavigation<any>();
@@ -46,6 +49,8 @@ export function TenantsListScreen() {
   const [formStartDate, setFormStartDate] = useState('');
   const [formPaymentDay, setFormPaymentDay] = useState('1');
   const [formDeposit, setFormDeposit] = useState('');
+  const [formContractImage, setFormContractImage] = useState<string | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [houses, setHouses] = useState<any[]>([]);
   const [vacantRooms, setVacantRooms] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
@@ -98,6 +103,8 @@ export function TenantsListScreen() {
     setFormStartDate('');
     setFormPaymentDay('1');
     setFormDeposit('');
+    setFormContractImage(null);
+    setShowDatePicker(false);
     setVacantRooms([]);
     setModalVisible(true);
     try {
@@ -105,6 +112,29 @@ export function TenantsListScreen() {
       setHouses(res.data.data);
     } catch (error) {
       console.error('Tenants loadHouses error:', error);
+    }
+  };
+
+  const onDateChange = (event: any, selectedDate?: Date) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      const dateStr = selectedDate.toISOString().split('T')[0];
+      setFormStartDate(dateStr);
+    }
+  };
+
+  const pickContractImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission', 'Camera roll permission is needed to upload contract photos.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 0.8,
+    });
+    if (!result.canceled && result.assets[0]) {
+      setFormContractImage(result.assets[0].uri);
     }
   };
 
@@ -158,14 +188,28 @@ export function TenantsListScreen() {
       Alert.alert('Validation', 'National ID must be exactly 16 digits.');
       return;
     }
-    if (
-      (formEmergencyName && formEmergencyName === formFullName) ||
-      (formEmergencyPhone && formEmergencyPhone === formPhone)
-    ) {
-      Alert.alert(
-        'Validation',
-        'Emergency contact name and phone must be different from tenant information.'
-      );
+    if (!formEmergencyName.trim()) {
+      Alert.alert('Validation', 'Emergency contact name is required.');
+      return;
+    }
+    if (!formEmergencyPhone.trim()) {
+      Alert.alert('Validation', 'Emergency contact phone is required.');
+      return;
+    }
+    if (!/^\d{10}$/.test(formEmergencyPhone.trim())) {
+      Alert.alert('Validation', 'Emergency contact phone must be exactly 10 digits.');
+      return;
+    }
+    if (!formEmergencyAddress.trim()) {
+      Alert.alert('Validation', 'Emergency contact address is required.');
+      return;
+    }
+    if (formEmergencyName === formFullName) {
+      Alert.alert('Validation', 'Emergency contact name must be different from tenant name.');
+      return;
+    }
+    if (formEmergencyPhone === formPhone) {
+      Alert.alert('Validation', 'Emergency contact phone must be different from tenant phone.');
       return;
     }
     if (assignRoom) {
@@ -181,27 +225,47 @@ export function TenantsListScreen() {
 
     setSaving(true);
     try {
-      const payload: any = {
-        fullName: formFullName.trim(),
-        phone: formPhone.trim(),
-        nationalId: formNationalId.trim(),
-      };
-      if (formEmail.trim()) payload.email = formEmail.trim();
-      if (formGender) payload.gender = formGender;
-      if (formOccupation.trim()) payload.occupation = formOccupation.trim();
-      if (formAddress.trim()) payload.address = formAddress.trim();
-      if (formEmergencyName.trim()) payload.emergencyName = formEmergencyName.trim();
-      if (formEmergencyPhone.trim()) payload.emergencyPhone = formEmergencyPhone.trim();
-      if (formEmergencyAddress.trim()) payload.emergencyAddress = formEmergencyAddress.trim();
-
+      let payload: any;
       if (assignRoom && formRoomId) {
-        payload.roomId = formRoomId;
-        payload.startDate = formStartDate.trim();
-        payload.paymentDay = parseInt(formPaymentDay) || 1;
-        if (formDeposit.trim()) payload.deposit = parseFloat(formDeposit) || 0;
+        const fd = new FormData();
+        fd.append('fullName', formFullName.trim());
+        fd.append('phone', formPhone.trim());
+        fd.append('nationalId', formNationalId.trim());
+        if (formEmail.trim()) fd.append('email', formEmail.trim());
+        if (formGender) fd.append('gender', formGender);
+        if (formOccupation.trim()) fd.append('occupation', formOccupation.trim());
+        if (formAddress.trim()) fd.append('address', formAddress.trim());
+        fd.append('emergencyName', formEmergencyName.trim());
+        fd.append('emergencyPhone', formEmergencyPhone.trim());
+        fd.append('emergencyAddress', formEmergencyAddress.trim());
+        fd.append('roomId', formRoomId);
+        fd.append('startDate', formStartDate.trim());
+        fd.append('paymentDay', String(parseInt(formPaymentDay) || 1));
+        if (formDeposit.trim()) fd.append('deposit', String(parseFloat(formDeposit) || 0));
+        if (formContractImage) {
+          const filename = formContractImage.split('/').pop() || 'contract.jpg';
+          const match = /\.(\w+)$/.exec(filename);
+          const type = match ? `image/${match[1]}` : 'image/jpeg';
+          fd.append('contractImage', { uri: formContractImage, name: filename, type } as any);
+        }
+        payload = fd;
+      } else {
+        payload = {
+          fullName: formFullName.trim(),
+          phone: formPhone.trim(),
+          nationalId: formNationalId.trim(),
+          emergencyName: formEmergencyName.trim(),
+          emergencyPhone: formEmergencyPhone.trim(),
+          emergencyAddress: formEmergencyAddress.trim(),
+        };
+        if (formEmail.trim()) payload.email = formEmail.trim();
+        if (formGender) payload.gender = formGender;
+        if (formOccupation.trim()) payload.occupation = formOccupation.trim();
+        if (formAddress.trim()) payload.address = formAddress.trim();
       }
 
-      await tenantsAPI.create(payload);
+      const headers = payload instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {};
+      await tenantsAPI.create(payload, headers);
       Alert.alert('Success', 'Tenant created successfully');
       setModalVisible(false);
       loadTenants(search);
@@ -490,13 +554,19 @@ export function TenantsListScreen() {
                   ) : null}
 
                   <Text style={styles.label}>Contract Start Date *</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={formStartDate}
-                    onChangeText={setFormStartDate}
-                    placeholder="YYYY-MM-DD"
-                    placeholderTextColor="#94a3b8"
-                  />
+                  <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
+                    <Text style={{ color: formStartDate ? '#1e293b' : '#94a3b8', fontSize: 15 }}>
+                      {formStartDate || 'Select date'}
+                    </Text>
+                  </TouchableOpacity>
+                  {showDatePicker && (
+                    <DateTimePicker
+                      value={formStartDate ? new Date(formStartDate) : new Date()}
+                      mode="date"
+                      display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                      onChange={onDateChange}
+                    />
+                  )}
 
                   <View style={styles.row}>
                     <View style={styles.halfField}>
@@ -522,6 +592,25 @@ export function TenantsListScreen() {
                       />
                     </View>
                   </View>
+
+                  <Text style={styles.label}>Contract Photo</Text>
+                  <TouchableOpacity style={styles.uploadBtn} onPress={pickContractImage}>
+                    <Ionicons name="camera-outline" size={22} color="#0ea5e9" />
+                    <Text style={styles.uploadBtnText}>
+                      {formContractImage ? 'Change Photo' : 'Upload Contract Photo'}
+                    </Text>
+                  </TouchableOpacity>
+                  {formContractImage && (
+                    <View style={styles.imagePreviewContainer}>
+                      <Image source={{ uri: formContractImage }} style={styles.imagePreview} />
+                      <TouchableOpacity
+                        style={styles.removeImageBtn}
+                        onPress={() => setFormContractImage(null)}
+                      >
+                        <Ionicons name="close-circle" size={24} color="#ef4444" />
+                      </TouchableOpacity>
+                    </View>
+                  )}
                 </>
               )}
 
@@ -696,4 +785,34 @@ const styles = StyleSheet.create({
   },
   saveBtnDisabled: { opacity: 0.6 },
   saveBtnText: { color: '#ffffff', fontSize: 16, fontWeight: '700' },
+  uploadBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderWidth: 1,
+    borderColor: '#0ea5e9',
+    borderStyle: 'dashed',
+    borderRadius: 10,
+    paddingVertical: 14,
+    backgroundColor: '#f0f9ff',
+  },
+  uploadBtnText: { color: '#0ea5e9', fontSize: 14, fontWeight: '600' },
+  imagePreviewContainer: {
+    marginTop: 10,
+    borderRadius: 10,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  imagePreview: {
+    width: '100%',
+    height: 180,
+    borderRadius: 10,
+    backgroundColor: '#e2e8f0',
+  },
+  removeImageBtn: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+  },
 });
