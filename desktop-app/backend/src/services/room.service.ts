@@ -23,6 +23,11 @@ export class RoomService {
     });
     if (existing) throw new BadRequestError('Room number already exists in this house');
 
+    const currentRoomCount = await prisma.room.count({ where: { houseId: data.houseId } });
+    if (currentRoomCount >= house.totalRooms) {
+      throw new BadRequestError(`House already has the maximum of ${house.totalRooms} rooms`);
+    }
+
     return prisma.room.create({ data });
   }
 

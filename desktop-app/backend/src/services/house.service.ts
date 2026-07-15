@@ -5,7 +5,6 @@ export class HouseService {
   async create(data: {
     name: string;
     address: string;
-    description?: string;
     numberOfFloors: number;
     totalRooms: number;
     images?: string[];
@@ -15,7 +14,6 @@ export class HouseService {
       data: {
         name: data.name,
         address: data.address,
-        description: data.description,
         numberOfFloors: data.numberOfFloors,
         totalRooms: data.totalRooms,
         images: data.images || [],
@@ -81,7 +79,6 @@ export class HouseService {
     data: {
       name?: string;
       address?: string;
-      description?: string;
       numberOfFloors?: number;
       totalRooms?: number;
       images?: string[];

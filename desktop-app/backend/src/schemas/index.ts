@@ -12,7 +12,7 @@ export const registerSchema = z.object({
     email: z.string().email(),
     password: z.string().min(6),
     fullName: z.string().min(2),
-    phone: z.string().min(6),
+    phone: z.string().regex(/^\d{10}$/, 'Phone must be exactly 10 digits'),
     role: z.enum(['OWNER', 'MANAGER', 'ACCOUNTANT']).optional(),
   }),
 });
@@ -21,7 +21,6 @@ export const houseSchema = z.object({
   body: z.object({
     name: z.string().min(1, 'House name is required'),
     address: z.string().min(1, 'Address is required'),
-    description: z.string().optional(),
     numberOfFloors: z.number().int().min(1),
     totalRooms: z.number().int().min(0),
   }),
@@ -46,7 +45,7 @@ export const tenantSchema = z.object({
   body: z
     .object({
       fullName: z.string().min(2, 'Full name is required'),
-      phone: z.string().min(6, 'Phone is required'),
+      phone: z.string().regex(/^\d{10}$/, 'Phone must be exactly 10 digits'),
       email: z.string().email().optional().or(z.literal('')),
       gender: z.string().optional(),
       nationalId: z
@@ -151,7 +150,10 @@ export const changePasswordSchema = z.object({
 export const updateProfileSchema = z.object({
   body: z.object({
     fullName: z.string().min(2).optional(),
-    phone: z.string().min(6).optional(),
+    phone: z
+      .string()
+      .regex(/^\d{10}$/, 'Phone must be exactly 10 digits')
+      .optional(),
   }),
 });
 

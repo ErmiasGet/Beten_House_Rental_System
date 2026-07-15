@@ -30,7 +30,6 @@ export function HousesScreen() {
   const [editingHouse, setEditingHouse] = useState<any>(null);
   const [formName, setFormName] = useState('');
   const [formAddress, setFormAddress] = useState('');
-  const [formDescription, setFormDescription] = useState('');
   const [formFloors, setFormFloors] = useState('1');
   const [formTotalRooms, setFormTotalRooms] = useState('0');
   const [saving, setSaving] = useState(false);
@@ -74,7 +73,6 @@ export function HousesScreen() {
     setEditingHouse(null);
     setFormName('');
     setFormAddress('');
-    setFormDescription('');
     setFormFloors('1');
     setFormTotalRooms('0');
     setModalVisible(true);
@@ -84,7 +82,6 @@ export function HousesScreen() {
     setEditingHouse(house);
     setFormName(house.name);
     setFormAddress(house.address);
-    setFormDescription(house.description || '');
     setFormFloors(String(house.numberOfFloors));
     setFormTotalRooms(String(house.totalRooms));
     setModalVisible(true);
@@ -107,7 +104,6 @@ export function HousesScreen() {
       const payload = {
         name: formName.trim(),
         address: formAddress.trim(),
-        description: formDescription.trim() || undefined,
         numberOfFloors: floors,
         totalRooms: rooms,
       };
@@ -263,16 +259,6 @@ export function HousesScreen() {
                 onChangeText={setFormAddress}
                 placeholder="e.g. 123 Main St"
                 placeholderTextColor="#94a3b8"
-              />
-              <Text style={styles.label}>Description</Text>
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                value={formDescription}
-                onChangeText={setFormDescription}
-                placeholder="Optional description"
-                placeholderTextColor="#94a3b8"
-                multiline
-                numberOfLines={3}
               />
               <View style={styles.row}>
                 <View style={styles.halfField}>

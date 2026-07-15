@@ -300,7 +300,14 @@ export function TenantsPage() {
               <label className="block text-sm font-medium mb-1">Phone *</label>
               <Input
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={(e) => {
+                  const formatted = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setFormData({ ...formData, phone: formatted });
+                }}
+                maxLength={10}
+                placeholder="10 digits only"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 required
               />
             </div>
@@ -358,7 +365,14 @@ export function TenantsPage() {
                 <label className="block text-sm font-medium mb-1">Phone</label>
                 <Input
                   value={formData.emergencyPhone}
-                  onChange={(e) => setFormData({ ...formData, emergencyPhone: e.target.value })}
+                  onChange={(e) => {
+                    const formatted = e.target.value.replace(/\D/g, '').slice(0, 10);
+                    setFormData({ ...formData, emergencyPhone: formatted });
+                  }}
+                  maxLength={10}
+                  placeholder="10 digits only"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                 />
               </div>
               <div>
