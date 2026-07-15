@@ -100,7 +100,7 @@ export function LoginScreen() {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.demoText}>Demo: admin@betora.com / admin123</Text>
+        <Text style={styles.demoText}>Smart ቤት ኪራይ — Rental Management System</Text>
       </View>
     </KeyboardAvoidingView>
   );

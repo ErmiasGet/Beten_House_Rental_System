@@ -21,7 +21,8 @@
         "foregroundImage": "./src/assets/icon.png",
         "backgroundColor": "#0ea5e9"
       },
-      "package": "com.betenhomesrent.mobile"
+      "package": "com.betenhomesrent.mobile",
+      "versionCode": 1
     },
     "plugins": [
       [

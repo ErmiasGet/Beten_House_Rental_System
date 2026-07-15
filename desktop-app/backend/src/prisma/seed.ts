@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 async function seed() {
   console.log('Seeding database...');
 
-  const hashedPassword = await bcrypt.hash('admin123', 12);
+  const hashedPassword = await bcrypt.hash('BetenHomes@2026', 12);
   const admin = await prisma.user.upsert({
     where: { email: 'admin@betora.com' },
     update: {},

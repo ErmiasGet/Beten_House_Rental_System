@@ -82,7 +82,6 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
       }
 
       if (finalStatus !== 'granted') {
-        console.log('Failed to get push token for push notification!');
         return;
       }
 

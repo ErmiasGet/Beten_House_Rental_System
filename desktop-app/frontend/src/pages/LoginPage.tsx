@@ -83,7 +83,7 @@ export function LoginPage() {
           </form>
 
           <p className="mt-6 text-center text-xs text-gray-400">
-            Demo: admin@betora.com / admin123
+            Smart ቤት ኪራይ — Rental Management System
           </p>
         </div>
       </div>
