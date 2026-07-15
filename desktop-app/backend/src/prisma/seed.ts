@@ -7,7 +7,7 @@ async function seed() {
   const hashedPassword = await bcrypt.hash('BetenHomes@2026', 12);
   const admin = await prisma.user.upsert({
     where: { email: 'admin@betora.com' },
-    update: {},
+    update: { password: hashedPassword },
     create: {
       fullName: 'System Admin',
       email: 'admin@betora.com',
@@ -64,7 +64,7 @@ async function seed() {
 
   // --- Tenant 1: Abebe Kebede (paid up to date) ---
   const tenant = await prisma.tenant.upsert({
-    where: { nationalId: 'ID123456' },
+    where: { nationalId: '123456789012' },
     update: { roomId: rooms[0].id },
     create: {
       fullName: 'Abebe Kebede',
@@ -133,7 +133,7 @@ async function seed() {
 
   // --- Overdue Tenant: Bekele Alemu (paymentDay: 1, unpaid Jan-Jun 2026) ---
   const overdueTenant = await prisma.tenant.upsert({
-    where: { nationalId: 'ID654321' },
+    where: { nationalId: '654321098765' },
     update: { roomId: overdueRoom.id },
     create: {
       fullName: 'Bekele Alemu',
@@ -188,7 +188,7 @@ async function seed() {
 
   // --- Due Today Tenant: Chaltu Desta (paymentDay: 9, matches today July 9) ---
   const dueTodayTenant = await prisma.tenant.upsert({
-    where: { nationalId: 'ID789012' },
+    where: { nationalId: '789012345678' },
     update: { roomId: dueTodayRoom.id },
     create: {
       fullName: 'Chaltu Desta',
