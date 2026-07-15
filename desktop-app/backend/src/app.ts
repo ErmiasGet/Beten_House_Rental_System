@@ -23,9 +23,17 @@ import reportRoutes from './routes/report.routes';
 const app = express();
 
 app.use(helmet());
+const allowedOrigins = config.cors.origin;
+
 app.use(
   cors({
-    origin: config.isDev ? true : config.cors.origin,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin) || origin === 'null') {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );

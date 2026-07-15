@@ -72,7 +72,12 @@ function createWindow() {
 }
 
 app.whenReady().then(async () => {
-  if (!process.env.VITE_DEV_SERVER_URL && !process.env.USE_REMOTE_BACKEND) {
+  if (process.env.VITE_DEV_SERVER_URL) {
+    console.log('[electron] Dev mode - using Vite dev server');
+  } else if (process.env.USE_REMOTE_BACKEND) {
+    console.log('[electron] Using remote backend: https://beten-backend.onrender.com');
+  } else {
+    console.log('[electron] Starting local backend...');
     try {
       await startBackend();
     } catch (err) {

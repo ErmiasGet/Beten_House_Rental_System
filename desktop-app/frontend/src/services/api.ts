@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 const API_BASE_URL =
-  window.location.protocol === 'file:' ? 'https://your-app.up.railway.app/api/v1' : '/api/v1';
+  window.location.protocol === 'file:' ? 'https://beten-backend.onrender.com/api/v1' : '/api/v1';
 
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
