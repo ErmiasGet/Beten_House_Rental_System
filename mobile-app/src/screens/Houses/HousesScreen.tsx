@@ -123,25 +123,6 @@ export function HousesScreen() {
     }
   };
 
-  const handleDelete = (house: any) => {
-    Alert.alert('Delete House', `Are you sure you want to delete "${house.name}"?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await housesAPI.delete(house.id);
-            loadHouses();
-          } catch (err: any) {
-            const msg = err?.response?.data?.message || 'Failed to delete house.';
-            Alert.alert('Error', msg);
-          }
-        },
-      },
-    ]);
-  };
-
   const renderHouse = ({ item }: { item: any }) => (
     <TouchableOpacity style={styles.houseCard} onLongPress={() => openEdit(item)}>
       <View style={styles.houseHeader}>
@@ -154,9 +135,6 @@ export function HousesScreen() {
         </View>
         <TouchableOpacity style={styles.menuBtn} onPress={() => openEdit(item)}>
           <Ionicons name="create-outline" size={20} color="#64748b" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuBtn} onPress={() => handleDelete(item)}>
-          <Ionicons name="trash-outline" size={20} color="#ef4444" />
         </TouchableOpacity>
       </View>
       <View style={styles.statsRow}>

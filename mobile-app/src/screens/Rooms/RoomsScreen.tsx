@@ -165,25 +165,6 @@ export function RoomsScreen() {
     }
   };
 
-  const handleDelete = (room: any) => {
-    Alert.alert('Delete Room', `Are you sure you want to delete Room ${room.roomNumber}?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await roomsAPI.delete(room.id);
-            loadData();
-          } catch (err: any) {
-            const msg = err?.response?.data?.message || 'Failed to delete room.';
-            Alert.alert('Error', msg);
-          }
-        },
-      },
-    ]);
-  };
-
   const renderRoom = ({ item }: { item: any }) => {
     const statusColor = getStatusColor(item.status);
     return (
@@ -218,9 +199,6 @@ export function RoomsScreen() {
           <View style={styles.roomActions}>
             <TouchableOpacity style={styles.actionBtn} onPress={() => openEdit(item)}>
               <Ionicons name="create-outline" size={18} color="#64748b" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.actionBtn} onPress={() => handleDelete(item)}>
-              <Ionicons name="trash-outline" size={18} color="#ef4444" />
             </TouchableOpacity>
           </View>
         </View>
