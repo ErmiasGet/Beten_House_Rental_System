@@ -35,11 +35,5 @@ router.put(
   auditLog(AuditAction.UPDATE, 'Payment'),
   controller.update
 );
-router.delete(
-  '/:id',
-  authorize(UserRole.OWNER),
-  auditLog(AuditAction.DELETE, 'Payment'),
-  controller.delete
-);
 
 export default router;

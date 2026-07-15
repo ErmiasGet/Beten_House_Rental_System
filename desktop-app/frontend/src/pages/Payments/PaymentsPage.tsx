@@ -304,24 +304,10 @@ export function PaymentsPage() {
           <Button variant="outline" size="sm" onClick={() => openEditModal(item)}>
             <Pencil className="h-3 w-3" />
           </Button>
-          <Button variant="destructive" size="sm" onClick={() => handleDelete(item.id)}>
-            Delete
-          </Button>
         </div>
       ),
     },
   ];
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure?')) return;
-    try {
-      await paymentsAPI.delete(id);
-      toast({ title: 'Deleted' });
-      loadPayments();
-    } catch (error) {
-      toast({ title: 'Error', variant: 'destructive' });
-    }
-  };
 
   return (
     <div className="page-container">

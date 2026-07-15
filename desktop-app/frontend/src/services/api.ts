@@ -91,7 +91,6 @@ export const paymentsAPI = {
   getById: (id: string) => api.get(`/payments/${id}`),
   create: (data: any) => api.post('/payments', data),
   update: (id: string, data: any) => api.put(`/payments/${id}`, data),
-  delete: (id: string) => api.delete(`/payments/${id}`),
   payOverdue: (data: any) => api.post('/payments/pay-overdue', data),
   getBalance: (tenantId: string) => api.get(`/payments/balance/${tenantId}`),
 };
