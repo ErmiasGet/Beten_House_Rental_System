@@ -257,6 +257,7 @@ export function ContractsPage() {
               <Input
                 type="number"
                 min={0}
+                placeholder="e.g. 500"
                 value={formData.monthlyRent}
                 onChange={(e) =>
                   setFormData({ ...formData, monthlyRent: parseFloat(e.target.value) })
@@ -269,6 +270,7 @@ export function ContractsPage() {
               <Input
                 type="number"
                 min={0}
+                placeholder="e.g. 500"
                 value={formData.deposit}
                 onChange={(e) => setFormData({ ...formData, deposit: parseFloat(e.target.value) })}
               />
@@ -279,6 +281,7 @@ export function ContractsPage() {
                 type="number"
                 min={1}
                 max={31}
+                placeholder="e.g. 1"
                 value={formData.paymentDay}
                 onChange={(e) => setFormData({ ...formData, paymentDay: parseInt(e.target.value) })}
               />

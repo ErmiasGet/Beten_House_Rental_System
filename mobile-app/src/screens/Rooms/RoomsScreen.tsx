@@ -336,6 +336,7 @@ export function RoomsScreen() {
                     value={formFloor}
                     onChangeText={setFormFloor}
                     keyboardType="numeric"
+                    placeholder="e.g. 1"
                     placeholderTextColor="#94a3b8"
                   />
                 </View>
@@ -346,6 +347,7 @@ export function RoomsScreen() {
                     value={formBedrooms}
                     onChangeText={setFormBedrooms}
                     keyboardType="numeric"
+                    placeholder="e.g. 2"
                     placeholderTextColor="#94a3b8"
                   />
                 </View>
@@ -382,6 +384,7 @@ export function RoomsScreen() {
                     value={formBathrooms}
                     onChangeText={setFormBathrooms}
                     keyboardType="numeric"
+                    placeholder="e.g. 1"
                     placeholderTextColor="#94a3b8"
                   />
                 </View>

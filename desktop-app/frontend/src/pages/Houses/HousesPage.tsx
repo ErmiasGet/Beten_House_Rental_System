@@ -196,9 +196,22 @@ export function HousesPage() {
               <label className="block text-sm font-medium mb-1">Total Rooms</label>
               <Input
                 type="number"
+                min={1}
+                value={formData.numberOfFloors}
+                onChange={(e) =>
+                  setFormData({ ...formData, numberOfFloors: parseInt(e.target.value) })
+                }
+                placeholder="e.g. 2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Total Rooms</label>
+              <Input
+                type="number"
                 min={0}
                 value={formData.totalRooms}
                 onChange={(e) => setFormData({ ...formData, totalRooms: parseInt(e.target.value) })}
+                placeholder="e.g. 10"
               />
             </div>
           </div>

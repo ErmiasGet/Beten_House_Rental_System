@@ -398,6 +398,7 @@ export function PaymentsPage() {
               <Input
                 type="number"
                 min={0}
+                placeholder="e.g. 500"
                 value={formData.amount}
                 onChange={(e) =>
                   setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })
@@ -411,6 +412,7 @@ export function PaymentsPage() {
                 type="number"
                 min={0}
                 max={formData.amount}
+                placeholder="e.g. 500"
                 value={formData.amountPaid}
                 onChange={(e) =>
                   setFormData({ ...formData, amountPaid: parseFloat(e.target.value) || 0 })
@@ -465,6 +467,7 @@ export function PaymentsPage() {
               <label className="block text-sm font-medium mb-1">Year</label>
               <Input
                 type="number"
+                placeholder="e.g. 2026"
                 value={formData.year}
                 onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
               />
@@ -474,6 +477,7 @@ export function PaymentsPage() {
             <label className="block text-sm font-medium mb-1">Notes</label>
             <textarea
               className="flex min-h-[60px] w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+              placeholder="Optional payment notes..."
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             />
@@ -572,6 +576,7 @@ export function PaymentsPage() {
                   type="number"
                   min={1}
                   max={tenantBalance.outstandingBalance}
+                  placeholder="e.g. 1000"
                   value={payOverdueData.amount}
                   onChange={(e) =>
                     setPayOverdueData({

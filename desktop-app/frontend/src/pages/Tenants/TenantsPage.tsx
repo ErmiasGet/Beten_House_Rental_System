@@ -293,6 +293,7 @@ export function TenantsPage() {
               <Input
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                placeholder="e.g. John Doe"
                 required
               />
             </div>
@@ -319,6 +320,7 @@ export function TenantsPage() {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="e.g. john@example.com"
               />
             </div>
             <div>
@@ -341,6 +343,7 @@ export function TenantsPage() {
             <Input
               value={formData.occupation}
               onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
+              placeholder="e.g. Teacher"
             />
           </div>
           <div>
@@ -349,6 +352,7 @@ export function TenantsPage() {
               className="flex min-h-[60px] w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              placeholder="Enter address"
             />
           </div>
           <div className="border rounded-lg p-4 bg-gray-50">
@@ -359,6 +363,7 @@ export function TenantsPage() {
                 <Input
                   value={formData.emergencyName}
                   onChange={(e) => setFormData({ ...formData, emergencyName: e.target.value })}
+                  placeholder="Emergency contact name"
                 />
               </div>
               <div>
@@ -380,6 +385,7 @@ export function TenantsPage() {
                 <Input
                   value={formData.emergencyAddress}
                   onChange={(e) => setFormData({ ...formData, emergencyAddress: e.target.value })}
+                  placeholder="Emergency contact address"
                 />
               </div>
             </div>

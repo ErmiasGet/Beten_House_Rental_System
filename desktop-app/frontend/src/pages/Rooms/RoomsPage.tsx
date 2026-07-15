@@ -232,6 +232,7 @@ export function RoomsPage() {
             <div>
               <label className="block text-sm font-medium mb-1">Room Number</label>
               <Input
+                placeholder="e.g. 101"
                 value={formData.roomNumber}
                 onChange={(e) => setFormData({ ...formData, roomNumber: e.target.value })}
                 required
@@ -242,6 +243,7 @@ export function RoomsPage() {
               <Input
                 type="number"
                 min={1}
+                placeholder="e.g. 1"
                 value={formData.floorNumber}
                 onChange={(e) =>
                   setFormData({ ...formData, floorNumber: parseInt(e.target.value) })
@@ -256,6 +258,7 @@ export function RoomsPage() {
                 type="number"
                 min={0.1}
                 step="0.1"
+                placeholder="e.g. 4.5"
                 value={formData.length}
                 onChange={(e) => setFormData({ ...formData, length: parseFloat(e.target.value) })}
                 required
@@ -267,6 +270,7 @@ export function RoomsPage() {
                 type="number"
                 min={0.1}
                 step="0.1"
+                placeholder="e.g. 3.5"
                 value={formData.width}
                 onChange={(e) => setFormData({ ...formData, width: parseFloat(e.target.value) })}
                 required
@@ -277,6 +281,7 @@ export function RoomsPage() {
               <Input
                 type="number"
                 min={1}
+                placeholder="e.g. 2"
                 value={formData.bedrooms}
                 onChange={(e) => setFormData({ ...formData, bedrooms: parseInt(e.target.value) })}
               />
@@ -288,6 +293,7 @@ export function RoomsPage() {
               <Input
                 type="number"
                 min={0}
+                placeholder="e.g. 500"
                 value={formData.monthlyRent}
                 onChange={(e) =>
                   setFormData({ ...formData, monthlyRent: parseFloat(e.target.value) })
@@ -300,6 +306,7 @@ export function RoomsPage() {
               <Input
                 type="number"
                 min={0}
+                placeholder="e.g. 500"
                 value={formData.depositAmount}
                 onChange={(e) =>
                   setFormData({ ...formData, depositAmount: parseFloat(e.target.value) })
