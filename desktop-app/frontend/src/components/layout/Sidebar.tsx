@@ -19,7 +19,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Houses', href: '/houses', icon: Building2 },
   { name: 'Rooms', href: '/rooms', icon: DoorOpen },
-  { name: 'Tenants', href: '/tenants', icon: Users },
+  { name: 'Tenants(ተከራይ)', href: '/tenants', icon: Users },
   { name: 'Contracts', href: '/contracts', icon: FileText },
   { name: 'Payments', href: '/payments', icon: CreditCard },
   { name: 'Expenses', href: '/expenses', icon: Wallet },

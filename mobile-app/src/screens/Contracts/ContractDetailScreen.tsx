@@ -105,7 +105,7 @@ export function ContractDetailScreen({ route, navigation }: ContractDetailProps)
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Ionicons name="person" size={20} color="#0ea5e9" />
-            <Text style={styles.cardTitle}>Tenant</Text>
+            <Text style={styles.cardTitle}>Tenant(ተከራይ)</Text>
           </View>
           <Text style={styles.primaryValue}>{contract?.tenant?.fullName}</Text>
           <Text style={styles.secondaryValue}>{contract?.tenant?.phone}</Text>

@@ -122,7 +122,7 @@ export function ContractsPage() {
   };
 
   const columns = [
-    { key: 'tenant', header: 'Tenant', render: (item: any) => item.tenant?.fullName },
+    { key: 'tenant', header: 'Tenant(ተከራይ)', render: (item: any) => item.tenant?.fullName },
     { key: 'house', header: 'House', render: (item: any) => item.house?.name },
     { key: 'room', header: 'Room', render: (item: any) => item.room?.roomNumber },
     { key: 'monthlyRent', header: 'Rent', render: (item: any) => formatCurrency(item.monthlyRent) },
@@ -168,7 +168,7 @@ export function ContractsPage() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Rental Contracts</h1>
-          <p className="page-subtitle">Manage tenant rental agreements</p>
+          <p className="page-subtitle">Manage tenant(ተከራይ) rental agreements</p>
         </div>
         <Button onClick={openCreateModal}>
           <Plus className="h-4 w-4 mr-2" /> New Contract
@@ -194,13 +194,13 @@ export function ContractsPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Tenant</label>
+              <label className="block text-sm font-medium mb-1">Tenant(ተከራይ)</label>
               <Select
                 value={formData.tenantId}
                 onChange={(e) => setFormData({ ...formData, tenantId: e.target.value })}
                 required
               >
-                <option value="">Select tenant</option>
+                <option value="">Select tenant(ተከራይ)</option>
                 {tenants.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.fullName}

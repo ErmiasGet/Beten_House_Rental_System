@@ -261,11 +261,11 @@ export function TenantsPage() {
     <div className="page-container">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Tenants</h1>
-          <p className="page-subtitle">Manage tenant information</p>
+          <h1 className="page-title">Tenants(ተከራይ)</h1>
+          <p className="page-subtitle">Manage tenant(ተከራይ) information</p>
         </div>
         <Button onClick={openCreateModal}>
-          <Plus className="h-4 w-4 mr-2" /> Add Tenant
+          <Plus className="h-4 w-4 mr-2" /> Add Tenant(ተከራይ)
         </Button>
       </div>
 
@@ -499,7 +499,7 @@ export function TenantsPage() {
           )}
 
           <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? 'Saving...' : editId ? 'Update Tenant' : 'Create Tenant'}
+            {submitting ? 'Saving...' : editId ? 'Update Tenant(ተከራይ)' : 'Create Tenant(ተከራይ)'}
           </Button>
         </form>
       </Modal>

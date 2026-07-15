@@ -35,12 +35,12 @@ function TenantStackScreen() {
       <TenantStack.Screen
         name="TenantsList"
         component={TenantsListScreen}
-        options={{ title: 'Tenants' }}
+        options={{ title: 'Tenants(ተከራይ)' }}
       />
       <TenantStack.Screen
         name="TenantDetail"
         component={TenantDetailScreen}
-        options={{ title: 'Tenant Details' }}
+        options={{ title: 'Tenant(ተከራይ) Details' }}
       />
     </TenantStack.Navigator>
   );

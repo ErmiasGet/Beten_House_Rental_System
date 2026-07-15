@@ -239,7 +239,7 @@ export function PaymentsPage() {
 
   const columns = [
     { key: 'receiptNumber', header: 'Receipt #' },
-    { key: 'tenant', header: 'Tenant', render: (item: any) => item.tenant?.fullName },
+    { key: 'tenant', header: 'Tenant(ተከራይ)', render: (item: any) => item.tenant?.fullName },
     { key: 'room', header: 'Room', render: (item: any) => item.room?.roomNumber },
     {
       key: 'amount',
@@ -376,14 +376,14 @@ export function PaymentsPage() {
           )}
           {!editId && (
             <div>
-              <label className="block text-sm font-medium mb-1">Tenant</label>
+              <label className="block text-sm font-medium mb-1">Tenant(ተከራይ)</label>
               <Select
                 value={formData.tenantId}
                 onChange={(e) => setFormData({ ...formData, tenantId: e.target.value })}
                 required
                 disabled
               >
-                <option value="">Select tenant</option>
+                <option value="">Select tenant(ተከራይ)</option>
                 {tenants.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.fullName} ({t.phone})
@@ -496,13 +496,13 @@ export function PaymentsPage() {
       >
         <form onSubmit={handlePayOverdueSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Select Tenant</label>
+            <label className="block text-sm font-medium mb-1">Select Tenant(ተከራይ)</label>
             <Select
               value={payOverdueData.tenantId}
               onChange={(e) => handlePayOverdueTenantChange(e.target.value)}
               required
             >
-              <option value="">Select tenant with overdue balance</option>
+              <option value="">Select tenant(ተከራይ) with overdue balance</option>
               {tenants.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.fullName} ({t.phone})

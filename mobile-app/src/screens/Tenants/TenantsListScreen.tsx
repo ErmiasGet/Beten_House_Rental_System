@@ -273,7 +273,7 @@ export function TenantsListScreen() {
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons name="people-outline" size={48} color="#cbd5e1" />
-              <Text style={styles.emptyText}>No tenants found</Text>
+              <Text style={styles.emptyText}>No tenants(ተከራይ) found</Text>
             </View>
           }
         />
@@ -290,7 +290,7 @@ export function TenantsListScreen() {
         >
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Add New Tenant</Text>
+              <Text style={styles.modalTitle}>Add New Tenant(ተከራይ)</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Ionicons name="close" size={24} color="#64748b" />
               </TouchableOpacity>
@@ -533,7 +533,7 @@ export function TenantsListScreen() {
                 {saving ? (
                   <ActivityIndicator color="#ffffff" />
                 ) : (
-                  <Text style={styles.saveBtnText}>Create Tenant</Text>
+                  <Text style={styles.saveBtnText}>Create Tenant(ተከራይ)</Text>
                 )}
               </TouchableOpacity>
             </ScrollView>

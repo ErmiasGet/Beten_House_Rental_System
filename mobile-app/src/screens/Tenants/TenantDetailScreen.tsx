@@ -72,7 +72,7 @@ export function TenantDetailScreen({ route, navigation }: TenantDetailProps) {
   if (!tenant) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>Tenant not found</Text>
+        <Text>Tenant(ተከራይ) not found</Text>
       </View>
     );
   }
