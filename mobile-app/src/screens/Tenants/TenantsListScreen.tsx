@@ -116,10 +116,19 @@ export function TenantsListScreen() {
   };
 
   const onDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(false);
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
+    if (event.type === 'dismissed') {
+      setShowDatePicker(false);
+      return;
+    }
     if (selectedDate) {
       const dateStr = selectedDate.toISOString().split('T')[0];
       setFormStartDate(dateStr);
+      if (Platform.OS === 'ios') {
+        setShowDatePicker(false);
+      }
     }
   };
 
@@ -349,7 +358,8 @@ export function TenantsListScreen() {
 
       <Modal visible={modalVisible} animationType="slide" transparent>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior="padding"
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
           style={styles.modalOverlay}
         >
           <View style={styles.modalContent}>
@@ -359,7 +369,11 @@ export function TenantsListScreen() {
                 <Ionicons name="close" size={24} color="#64748b" />
               </TouchableOpacity>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 20 }}
+              keyboardShouldPersistTaps="handled"
+            >
               <Text style={styles.sectionTitle}>Personal Information</Text>
 
               <Text style={styles.label}>Full Name *</Text>
@@ -453,16 +467,16 @@ export function TenantsListScreen() {
               <View style={styles.divider} />
               <Text style={styles.sectionTitle}>Emergency Contact</Text>
 
-              <Text style={styles.label}>Full Name</Text>
+              <Text style={styles.label}>Full Name *</Text>
               <TextInput
                 style={styles.input}
                 value={formEmergencyName}
                 onChangeText={setFormEmergencyName}
-                placeholder="Emergency contact name"
+                placeholder="e.g. Jane Doe"
                 placeholderTextColor="#94a3b8"
               />
 
-              <Text style={styles.label}>Phone</Text>
+              <Text style={styles.label}>Phone *</Text>
               <TextInput
                 style={styles.input}
                 value={formEmergencyPhone}
@@ -476,12 +490,12 @@ export function TenantsListScreen() {
                 maxLength={10}
               />
 
-              <Text style={styles.label}>Address</Text>
+              <Text style={styles.label}>Address *</Text>
               <TextInput
                 style={styles.input}
                 value={formEmergencyAddress}
                 onChangeText={setFormEmergencyAddress}
-                placeholder="Emergency contact address"
+                placeholder="e.g. Bole, Addis Ababa"
                 placeholderTextColor="#94a3b8"
               />
 
@@ -556,17 +570,9 @@ export function TenantsListScreen() {
                   <Text style={styles.label}>Contract Start Date *</Text>
                   <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
                     <Text style={{ color: formStartDate ? '#1e293b' : '#94a3b8', fontSize: 15 }}>
-                      {formStartDate || 'Select date'}
+                      {formStartDate || 'Tap to select date'}
                     </Text>
                   </TouchableOpacity>
-                  {showDatePicker && (
-                    <DateTimePicker
-                      value={formStartDate ? new Date(formStartDate) : new Date()}
-                      mode="date"
-                      display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                      onChange={onDateChange}
-                    />
-                  )}
 
                   <View style={styles.row}>
                     <View style={styles.halfField}>
@@ -629,6 +635,17 @@ export function TenantsListScreen() {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={formStartDate ? new Date(formStartDate + 'T00:00:00') : new Date()}
+          mode="date"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          onChange={onDateChange}
+          minimumDate={new Date(2020, 0, 1)}
+          maximumDate={new Date(2035, 11, 31)}
+        />
+      )}
     </View>
   );
 }
