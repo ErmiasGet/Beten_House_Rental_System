@@ -129,9 +129,13 @@ export function ProfileScreen({ navigation }: any) {
           <TextInput
             style={styles.input}
             value={phone}
-            onChangeText={setPhone}
-            placeholder="Enter your phone number"
-            keyboardType="phone-pad"
+            onChangeText={(text) => {
+              const digits = text.replace(/\D/g, '').slice(0, 10);
+              setPhone(digits);
+            }}
+            placeholder="10-digit number"
+            keyboardType="numeric"
+            maxLength={10}
           />
           <TouchableOpacity
             style={[styles.button, styles.primaryButton]}

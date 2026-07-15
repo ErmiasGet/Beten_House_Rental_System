@@ -146,8 +146,13 @@ export function ProfilePage() {
             <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
             <Input
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="Enter your phone number"
+              onChange={(e) => {
+                const formatted = e.target.value.replace(/\D/g, '').slice(0, 10);
+                setPhone(formatted);
+              }}
+              maxLength={10}
+              placeholder="10 digits only"
+              inputMode="numeric"
             />
           </div>
           <div className="flex justify-end">

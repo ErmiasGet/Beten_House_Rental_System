@@ -402,10 +402,14 @@ export function TenantsListScreen() {
               <TextInput
                 style={styles.input}
                 value={formEmergencyPhone}
-                onChangeText={setFormEmergencyPhone}
-                placeholder="Emergency contact phone"
+                onChangeText={(text) => {
+                  const digits = text.replace(/\D/g, '').slice(0, 10);
+                  setFormEmergencyPhone(digits);
+                }}
+                placeholder="10-digit number"
                 placeholderTextColor="#94a3b8"
-                keyboardType="phone-pad"
+                keyboardType="numeric"
+                maxLength={10}
               />
 
               <Text style={styles.label}>Address</Text>
