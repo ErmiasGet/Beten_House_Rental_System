@@ -18,6 +18,7 @@ export function NotificationsScreen() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [markingAll, setMarkingAll] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { refreshUnreadCount } = useNotifications();
 
@@ -48,6 +49,21 @@ export function NotificationsScreen() {
       refreshUnreadCount();
     } catch (error) {
       console.error('Notifications markAsRead error:', error);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    const unread = notifications.filter((n) => !n.isRead);
+    if (unread.length === 0) return;
+    setMarkingAll(true);
+    try {
+      await notificationsAPI.markAllAsRead();
+      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+      refreshUnreadCount();
+    } catch (error) {
+      console.error('Notifications markAllAsRead error:', error);
+    } finally {
+      setMarkingAll(false);
     }
   };
 
@@ -143,6 +159,20 @@ export function NotificationsScreen() {
               }}
             />
           }
+          ListHeaderComponent={
+            notifications.some((n) => !n.isRead) ? (
+              <TouchableOpacity
+                style={styles.markAllButton}
+                onPress={handleMarkAllAsRead}
+                disabled={markingAll}
+              >
+                <Ionicons name="checkmark-done-outline" size={18} color="#0ea5e9" />
+                <Text style={styles.markAllText}>
+                  {markingAll ? 'Marking...' : 'Mark all as read'}
+                </Text>
+              </TouchableOpacity>
+            ) : null
+          }
           contentContainerStyle={styles.list}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
@@ -203,4 +233,17 @@ const styles = StyleSheet.create({
   retryText: { color: '#ffffff', fontWeight: '600' },
   emptyContainer: { alignItems: 'center', paddingTop: 60 },
   emptyText: { color: '#94a3b8', fontSize: 16, marginTop: 12 },
+  markAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    backgroundColor: '#f0f9ff',
+    borderWidth: 1,
+    borderColor: '#e0f2fe',
+    borderRadius: 10,
+    paddingVertical: 10,
+    marginBottom: 12,
+  },
+  markAllText: { color: '#0ea5e9', fontSize: 14, fontWeight: '600' },
 });
