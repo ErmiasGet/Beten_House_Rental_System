@@ -10,6 +10,42 @@ Beten Homes Rent is a full-stack property management solution with three compone
 - **Mobile Application** - Landlord reminder & monitoring app (React Native + Expo)
 - **Backend API** - RESTful API server (Node.js + Express + TypeScript)
 
+## 📸 Screenshots
+
+### Desktop Application
+
+|                                                       |                                           |
+| ----------------------------------------------------- | ----------------------------------------- |
+| **Login Page**                                        | **Dashboard**                             |
+| ![Login Page](Screenshots/Login%20page.png)           | ![Dashboard](Screenshots/Dashboard.png)   |
+| **Houses**                                            | **Add House**                             |
+| ![Houses](Screenshots/Houses.png)                     | ![Add House](Screenshots/Add%20house.png) |
+| **Rooms**                                             | **Tenants**                               |
+| ![Rooms](Screenshots/Rooms.png)                       | ![Tenants](Screenshots/Tenants.png)       |
+| **Contracts**                                         | **Payments**                              |
+| ![Contracts](Screenshots/Contracts.png)               | ![Payments](Screenshots/Payments.png)     |
+| **Record Expenses**                                   | **Reports**                               |
+| ![Record Expenses](Screenshots/Record%20Expenses.png) | ![Reports](Screenshots/Reports.png)       |
+| **Notifications**                                     | **Profile**                               |
+| ![Notifications](Screenshots/Notifications.png)       | ![Profile](Screenshots/Profile.png)       |
+
+### Mobile Application
+
+|                                                     |                                                              |
+| --------------------------------------------------- | ------------------------------------------------------------ |
+| **Login**                                           | **Dashboard**                                                |
+| ![Mobile Login](Screenshots/Mobile-login.jpg)       | ![Mobile Dashboard](Screenshots/Mobile_homes.jpg)            |
+| **Houses**                                          | **Rooms**                                                    |
+| ![Mobile Houses](Screenshots/Mobile_houses.jpg)     | ![Mobile Rooms](Screenshots/Mobile_rooms.jpg)                |
+| **Tenants**                                         | **Contracts**                                                |
+| ![Mobile Tenants](Screenshots/Mobile_tenants.jpg)   | ![Mobile Contracts](Screenshots/Mobile_contracts.jpg)        |
+| **Payments**                                        | **Payment Details**                                          |
+| ![Mobile Payments](Screenshots/Mobile_payments.jpg) | ![Mobile Payment Details](Screenshots/Mobile_payments2.jpg)  |
+| **Reports**                                         | **Notifications**                                            |
+| ![Mobile Reports](Screenshots/Mobile_report.jpg)    | ![Mobile Notifications](Screenshots/Mobile_notification.jpg) |
+| **Profile**                                         |                                                              |
+| ![Mobile Profile](Screenshots/Mobile_profile.jpg)   |                                                              |
+
 ## ✨ Features
 
 ### Desktop Application
